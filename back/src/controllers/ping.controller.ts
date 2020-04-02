@@ -1,5 +1,5 @@
-import {Request, RestBindings, get, ResponseObject} from '@loopback/rest';
 import {inject} from '@loopback/context';
+import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
 
 /**
  * OpenAPI response for ping()
@@ -43,7 +43,7 @@ export class PingController {
   ping(): object {
     // Reply with a greeting, the current time, the url, and request headers
     return {
-      greeting: 'Hello from LoopBack',
+      greeting: 'Hello from Iot App',
       date: new Date(),
       url: this.req.url,
       headers: Object.assign({}, this.req.headers),

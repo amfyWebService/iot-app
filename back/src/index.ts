@@ -1,5 +1,5 @@
-import {BackApplication} from './application';
 import {ApplicationConfig} from '@loopback/core';
+import {BackApplication} from './application';
 
 export {BackApplication};
 
