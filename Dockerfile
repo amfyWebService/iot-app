@@ -1,17 +1,19 @@
-# étape de build
-FROM node:10-alpine as build-front
-RUN mkdir -p /home/node/front
-WORKDIR /home/node/front
-COPY ./front/package*.json ./
-RUN npm install
-COPY ./front .
-RUN npm run build
-# étape de production
-
 FROM node:10-alpine
 
 # Set to a non-root built-in user `node`
 USER node
+
+###############
+# Build front
+RUN mkdir -p /home/node/front
+WORKDIR /home/node/front
+COPY --chown=node ./front/package*.json ./
+RUN npm install
+COPY --chown=node ./front .
+RUN npm run build
+
+###############
+# Build back
 
 # Create app directory (with user `node`)
 RUN mkdir -p /home/node/back
@@ -27,9 +29,12 @@ RUN npm install
 
 # Bundle app source code
 COPY --chown=node ./back .
-COPY --chown=node --from=build-front /home/node/front/dist ./public
+RUN cp -r /home/node/front/dist ./public
 
 RUN npm run build
+
+# clean up
+RUN rm -rf /home/node/front && rm -rf /home/node/back/src
 
 # Bind to all network interfaces so that it can be mapped to the host OS
 ENV HOST=0.0.0.0 PORT=3000
