@@ -11,7 +11,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "NODE_ENV=production lb-tsc",
+    "prebuild": "npm run clean",
+    "build": "NODE_ENV=production lb-tsc -p tsconfig.prod.json",
     "build:watch": "lb-tsc --watch",
     "clean": "lb-clean dist *.tsbuildinfo",
     "lint": "npm run prettier:check && npm run eslint",
@@ -59,17 +60,18 @@
   },
   "devDependencies": {
     "@loopback/build": "^5.0.0",
-    "source-map-support": "^0.5.16",
+    "@loopback/cli": "^2.2.1",
+    "@loopback/eslint-config": "^6.0.2",
     "@loopback/testlab": "^2.0.2",
     "@types/node": "^10.17.17",
-    "@typescript-eslint/parser": "^2.25.0",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
-    "@loopback/eslint-config": "^6.0.2",
+    "@typescript-eslint/parser": "^2.25.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-eslint-plugin": "^2.2.1",
     "eslint-plugin-mocha": "^6.3.0",
-    "typescript": "~3.8.3",
-    "tsc-watch": "^4.2.3"
+    "source-map-support": "^0.5.16",
+    "tsc-watch": "^4.2.3",
+    "typescript": "~3.8.3"
   }
 }

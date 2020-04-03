@@ -3,7 +3,17 @@
   "extends": "@loopback/build/config/tsconfig.common.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "baseUrl": "./src",                           /* Base directory to resolve non-absolute module names. */
+    "paths": {                                /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+      "@/*": ["*"]
+      // "@/**": ["/"],
+      // "*": [
+      //   "*",
+      // ],
+      // "@core/*": ["core/*"],
+    }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "src/__tests__/**"]
 }

@@ -1,6 +1,7 @@
 /back/node_modules
 /back/npm-debug.log
 /back/dist
+/back/dist-dev
 # Cache used by TypeScript's incremental build
 /back/*.tsbuildinfo
 
