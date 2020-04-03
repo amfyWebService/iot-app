@@ -30,7 +30,7 @@ RUN npm install
 # Bundle app source code
 COPY --chown=node ./back .
 
-RUN cp -r /home/node/front/dist ./public && \
+RUN cp -rf /home/node/front/dist/* ./public && \
     npm run build && \
     npm prune --production && \
     rm -rf /home/node/front && \

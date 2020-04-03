@@ -1,0 +1,6 @@
+{
+  "name": "iotApi",
+  "connector": "rest",
+  "baseURL": "http://52.14.112.188:3000/api/v1/",
+  "crud": false
+}
