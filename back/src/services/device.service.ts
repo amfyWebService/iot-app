@@ -1,15 +1,18 @@
 import { bind, /* inject, */ BindingScope, inject } from '@loopback/core';
 import { IotApiService } from './iot-api.service';
 import { repository } from '@loopback/repository';
-import { DeviceRepository } from '@/repositories';
-import { IotApiDevice, Device } from '@/models';
+import { IotApiDevice, Device } from '../models';
+import { DeviceRepository } from '../repositories';
 
-@bind({ scope: BindingScope.TRANSIENT })
+@bind({ scope: BindingScope.SINGLETON })
 export class DeviceService {
   constructor(
     @repository(DeviceRepository) private deviceRepository: DeviceRepository,
     @inject('services.IotApiService') private iotApiService: IotApiService
-  ) { }
+  ) {
+    console.log("coucocoucou")
+    this.hydrateDevices();
+  }
 
   async hydrateDevices() {
     const [temp, wind, humidity] = await Promise.all([
@@ -17,8 +20,6 @@ export class DeviceService {
       this.iotApiService.getWind(),
       this.iotApiService.getHumidity(),
     ]);
-
-    const iotApiDevices: IotApiDevice[] = [];
 
     for (let tempItem of temp) {
       let apiDevice = new IotApiDevice(tempItem);
@@ -31,36 +32,47 @@ export class DeviceService {
       // end wind
 
       // humidity
-      let indexFarsen = humidity.findIndex(value => value.id === apiDevice.getId());
-      if (indexFarsen >= 0) {
-        apiDevice.humidity = wind[indexFarsen].humidity;
+      let indexHumidity = humidity.findIndex(value => value.id === apiDevice.getId());
+      if (indexHumidity >= 0) {
+        apiDevice.humidity = wind[indexHumidity].humidity;
       }
       // end humidity
 
-      //
-      let mongoDevice: Device | null;
-      try {
-        mongoDevice = await this.deviceRepository.findOne({ where: { name: apiDevice.id } });
+      this.apiDeviceToMongoDevice(apiDevice);
+    }
+  }
 
-        if (!mongoDevice) {
-          mongoDevice = new Device({
-            name: apiDevice.id,
-          });
-        }
+  async apiDeviceToMongoDevice(apiDevice: IotApiDevice){
+    let mongoDevice: Device | null;
+    try {
+      mongoDevice = await this.deviceRepository.findOne({ where: { name: apiDevice.id } });
 
-        const [latitude, longitude] = apiDevice.zone.split(',');
-        if (latitude && longitude) {
-          mongoDevice.latitude = latitude;
-          mongoDevice.longitude = longitude;
-        }
-
-        //mongoDevice.measurements?.push
-
-      } catch (e) {
-
+      if (!mongoDevice) {
+        mongoDevice = new Device({
+          name: apiDevice.id,
+        });
       }
 
-      iotApiDevices.push(apiDevice);
+      const [latitude, longitude] = apiDevice.zone.split(',');
+      if (latitude && longitude) {
+        mongoDevice.latitude = latitude;
+        mongoDevice.longitude = longitude;
+      }
+
+      mongoDevice.measurements.unshift({
+        temperature: apiDevice.celsius,
+        wind: apiDevice.wind,
+        humidity: apiDevice.humidity,
+        date: new Date(),
+      });
+
+      if(mongoDevice.measurements.length > 20){
+        mongoDevice.measurements.splice(20, 1);
+      }
+
+      this.deviceRepository.save(mongoDevice);
+    } catch (e) {
+      console.error("[DeviceService]: ", e);
     }
   }
 }

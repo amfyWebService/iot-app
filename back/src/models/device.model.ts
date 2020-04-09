@@ -30,14 +30,14 @@ export class Device extends Entity {
     type: 'array',
     itemType: 'object',
   })
-  measurements?: DeviceMeasurement[];
+  measurements: DeviceMeasurement[];
 
 
   constructor(data?: Partial<Device>) {
     super(data);
-    if(!this.measurements){
-      this.measurements = [];
-    }
+    // if(!this.measurements){
+    //   this.measurements = [];
+    // }
   }
 }
 
@@ -48,7 +48,8 @@ export interface DeviceRelations {
 export type DeviceWithRelations = Device & DeviceRelations;
 
 export interface DeviceMeasurement {
-  temperature: number;
-  wind: number;
-  humidity: number;
+  temperature?: number;
+  wind?: number;
+  humidity?: number;
+  date?: Date;
 }
