@@ -2,5 +2,22 @@
   "name": "iotApi",
   "connector": "rest",
   "baseURL": "http://52.14.112.188:3000/api/v1/",
-  "crud": false
+  "crud": false,
+  "options": {
+    "headers": {
+      "accepts": "application/json",
+      "content-type": "application/json"
+    }
+  },
+  "operations": [
+    {
+      "functions": {
+        "getTemperature": []
+      },
+      "template": {
+        "method": "GET",
+        "url": "/temperature"
+      }
+    }
+  ]
 }
