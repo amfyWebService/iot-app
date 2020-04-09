@@ -4,7 +4,6 @@ import { repository } from '@loopback/repository';
 import { IotApiDevice, Device } from '../models';
 import { DeviceRepository } from '../repositories';
 
-@bind({ scope: BindingScope.SINGLETON })
 export class DeviceService {
   constructor(
     @repository(DeviceRepository) private deviceRepository: DeviceRepository,
@@ -14,6 +13,9 @@ export class DeviceService {
     this.hydrateDevices();
   }
 
+  sayHello(){
+    console.log("Hello");
+  }
   async hydrateDevices() {
     const [temp, wind, humidity] = await Promise.all([
       this.iotApiService.getTemperature(),
