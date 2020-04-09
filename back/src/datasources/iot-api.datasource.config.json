@@ -16,7 +16,7 @@
       },
       "template": {
         "method": "GET",
-        "url": "/temperature"
+        "url": "http://52.14.112.188:3000/api/v1/temperature"
       }
     }
   ]
