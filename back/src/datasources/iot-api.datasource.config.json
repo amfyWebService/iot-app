@@ -16,7 +16,28 @@
       },
       "template": {
         "method": "GET",
-        "url": "http://52.14.112.188:3000/api/v1/temperature"
+        "url": "http://52.14.112.188:3000/api/v1/temperature",
+        "responsePath": "$.temperature.*"
+      }
+    },
+    {
+      "functions": {
+        "getWind": []
+      },
+      "template": {
+        "method": "GET",
+        "url": "http://52.14.112.188:3000/api/v1/wind",
+        "responsePath": "$.wind.*"
+      }
+    },
+    {
+      "functions": {
+        "getHumidity": []
+      },
+      "template": {
+        "method": "GET",
+        "url": "http://52.14.112.188:3000/api/v1/humidity",
+        "responsePath": "$.humidity.*"
       }
     }
   ]

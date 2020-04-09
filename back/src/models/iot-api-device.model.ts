@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model({settings: {strict: false}})
-export class Temperature extends Entity {
+@model()
+export class IotApiDevice extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -18,18 +18,34 @@ export class Temperature extends Entity {
 
   @property({
     type: 'number',
-    required: true,
-    name: '°C',
+    required: false,
   })
-  celsius: number;
+  celsius?: number;
+
+  @property({
+    type: 'number',
+    required: false,
+  })
+  wind?: number;
+
+  @property({
+    type: 'number',
+    required: false,
+  })
+  humidity?: number;
 
   // Define well-known properties here
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  // [prop: string]: any;
 
-  constructor(data?: Partial<Temperature>) {
+  constructor(data?: Partial<IotApiDevice>) {
+    if(data){
+      data.celsius = (data as any)["°C"];
+      data.wind = (data as any)["km/h"];
+      data.humidity = (data as any)["%"];
+    }
     super(data);
   }
 }
@@ -38,4 +54,4 @@ export interface TemperatureRelations {
   // describe navigational properties here
 }
 
-export type TemperatureWithRelations = Temperature & TemperatureRelations;
+export type TemperatureWithRelations = IotApiDevice & TemperatureRelations;

@@ -16,6 +16,10 @@ export class MongoDataSource extends juggler.DataSource
     @inject('datasources.config.mongo', {optional: true})
     dsConfig: object = config,
   ) {
+    if(process.env.NODE_ENV === "production"){
+      // @ts-ignore
+      dsConfig.host = "mongo"
+    }
     super(dsConfig);
   }
 

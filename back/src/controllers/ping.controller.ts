@@ -3,6 +3,7 @@ import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
 import { MongoDataSource } from '../datasources';
 import { service } from '@loopback/core';
 import { IotApiService } from '@/services';
+import { IotApiDevice } from '../models';
 
 /**
  * OpenAPI response for ping()
@@ -40,7 +41,7 @@ const PING_RESPONSE: ResponseObject = {
  */
 export class PingController {
   constructor(@inject(RestBindings.Http.REQUEST) private req: Request, 
-  //@inject("datasources.mongo") private mongoDs: MongoDataSource,
+  @inject("datasources.mongo") private mongoDs: MongoDataSource,
   //@service(IotApiService) private iotApiService:IotApiService  
   @inject("services.IotApiService") private iotApiService:IotApiService  
   ) {}
@@ -54,13 +55,12 @@ export class PingController {
   async ping(): Promise<object> {
     let mongoIsUp: string = "no";
 
-    /* try{
+    try{
       await this.mongoDs.ping();
       mongoIsUp = "yes";
     } catch(e){
       mongoIsUp = "error";
-    } */
-    let temp = await this.iotApiService.getTemperature();
+    }
     
     // Reply with a greeting, the current time, the url, and request headers
     return {
@@ -70,7 +70,6 @@ export class PingController {
       headers: Object.assign({}, this.req.headers),
       datasources: {
         "mongo": mongoIsUp,
-        "TempsTest": temp
       }
     };
   }
