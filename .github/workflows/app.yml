@@ -30,6 +30,7 @@ jobs:
       env:
         REPOSRC: "https://github.com/${{ github.repository }}"
         LOCALREPO: "iot-app"
+        HOST: ${{ secrets.HOST }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
