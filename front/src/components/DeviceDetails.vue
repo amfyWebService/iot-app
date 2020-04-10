@@ -31,35 +31,49 @@ export default {
   },
   data() {
     return {
+      deviceData: undefined,
       lastMeasurement: undefined,
       temperatureFelt: undefined,
       windForceMap: [
-        {minSpeed: 0, text: "Le vent est normal", type: "info"},
-        {minSpeed: 39, text: "Vent un peu fort", type: "info"},
-        {minSpeed: 75, text: "Fort coup de vent", type: "warning"},
-        {minSpeed: 89, text: "Tempête", type: "error"},
-      ],
+        { minSpeed: 0, text: "Le vent est normal", type: "info" },
+        { minSpeed: 39, text: "Vent un peu fort", type: "info" },
+        { minSpeed: 75, text: "Fort coup de vent", type: "warning" },
+        { minSpeed: 89, text: "Tempête", type: "error" }
+      ]
     };
-  },
-  mounted() {
-    if (this.device.measurements.length) this.lastMeasurement = this.device.measurements[0];
-    this.getFeltTemperature();
   },
   methods: {
     async refreshDevice() {
       const { data } = await this.$axios.get("/devices/" + this.device._id);
-      if (data.measurements.length) this.lastMeasurement = data.measurements[0];
+      this.deviceData = data;
     },
     async getFeltTemperature() {
-      const { data } = await this.$axios.get(`/devices/${this.device._id}/felt-temperature`);
-      data.felt ? this.temperatureFelt = Math.round(10*data.felt)/10 : this.temperatureFelt = 0;
+      const { data } = await this.$axios.get(
+        `/devices/${this.deviceData._id}/felt-temperature`
+      );
+      data.felt
+        ? (this.temperatureFelt = Math.round(10 * data.felt) / 10)
+        : (this.temperatureFelt = 0);
+    }
+  },
+  watch: {
+    device: {
+      immediate: true,
+      handler() {
+        this.refreshDevice();
+      }
+    },
+    deviceData(device){
+      this.getFeltTemperature();
+      if (device.measurements.length)
+        this.lastMeasurement = device.measurements[0];
     }
   },
   computed: {
-    windForce(){
+    windForce() {
       let windForce;
-      for(let item of this.windForceMap){
-        if(this.lastMeasurement.wind > item.minSpeed){
+      for (let item of this.windForceMap) {
+        if (this.lastMeasurement.wind > item.minSpeed) {
           windForce = item;
         } else {
           break;
