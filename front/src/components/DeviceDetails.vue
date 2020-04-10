@@ -52,7 +52,7 @@ export default {
     },
     async getFeltTemperature() {
       const { data } = await this.$axios.get(`/devices/${this.device._id}/felt-temperature`);
-      if(data.felt) this.temperatureFelt = Math.round(10*data.felt)/10;
+      data.felt ? this.temperatureFelt = Math.round(10*data.felt)/10 : this.temperatureFelt = 0;
     }
   }
 };
