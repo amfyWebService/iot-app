@@ -50,8 +50,15 @@ export class DeviceController {
     },
   })
   async find(
-    @param.filter(Device) filter?: Filter<Device>,
+    // @param.filter(Device) filter?: Filter<Device>,
+    @param.query.string("name") name?: string
   ): Promise<Device[]> {
+    const filter = {where: {}};
+
+    if(name){
+      filter.where = {name: name};
+    }
+
     return this.deviceRepository.find(filter);
   }
 
@@ -69,9 +76,8 @@ export class DeviceController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Device, {exclude: 'where'}) filter?: FilterExcludingWhere<Device>
   ): Promise<Device> {
-    return this.deviceRepository.findById(id, filter);
+    return this.deviceRepository.findById(id);
   }
 
   @get('/devices/{id}/felt-temperature', {

@@ -11,8 +11,7 @@ export async function main(options: ApplicationConfig = {}) {
   await app.start();
 
   //Get Import devices job
-  const deviceService = app.service(DeviceService);
-  const serviceInstance = await deviceService.getValue(app);
+  const serviceInstance = await app.service(DeviceService).getValue(app);
   const job = new ImportDevicesJob(serviceInstance);
   job.start();
 

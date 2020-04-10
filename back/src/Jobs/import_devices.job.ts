@@ -4,7 +4,7 @@ import util from 'util';
 
 
 export class ImportDevicesJob {
-  private readonly timeLoop: number = 1 * 5 * 1000;
+  private readonly timeLoop: number = 1 * 60 * 1000;
 
   constructor(
     private deviceService: DeviceService
