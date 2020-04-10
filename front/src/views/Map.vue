@@ -1,28 +1,36 @@
 <template>
   <v-container fluid style="height: 100%" class="pa-0">
     <v-row style="height: 100%" no-gutters>
-      <v-col cols="3" class="px-2">
-        <v-text-field
-          label="Rechercher un appareil"
-          v-model="search"
-          hide-detail
-          append-icon="fa-search"
-        ></v-text-field>
-        <v-card flat>
+      <v-col cols="3">
+        <v-card style="height: 100%">
           <v-card-text>
-            <device-list
-              :devices="devices"
-              v-show="!selectedDevice"
-              @click:device="selectedDevice=$event"
-            ></device-list>
-            <div v-if="selectedDevice">
-              <v-toolbar flat>
-                <v-btn icon @click="selectedDevice=undefined">
-                  <v-icon>fa-arrow-left</v-icon>
-                </v-btn>
-              </v-toolbar>
-              <device-details v-if="selectedDevice" :device="selectedDevice"></device-details>
-            </div>
+            <v-text-field
+              label="Rechercher un appareil"
+              v-model="search"
+              hide-details
+              append-icon="fa-search"
+            ></v-text-field>
+            <v-card flat>
+              <v-card-text class="pa-0">
+                <!-- Device details -->
+                <div v-if="selectedDevice" key="detail">
+                  <v-toolbar flat>
+                    <v-btn icon @click="selectedDevice=undefined">
+                      <v-icon>fa-arrow-left</v-icon>
+                    </v-btn>
+                  </v-toolbar>
+                  <device-details v-if="selectedDevice" :device="selectedDevice"></device-details>
+                </div>
+
+                <!-- Device list -->
+                <device-list
+                  v-show="!selectedDevice"
+                  key="list"
+                  :devices="devices"
+                  @click:device="selectedDevice=$event"
+                ></device-list>
+              </v-card-text>
+            </v-card>
           </v-card-text>
         </v-card>
       </v-col>
@@ -34,7 +42,8 @@
             :key="device.id"
             :lat-lng="device.latLng"
             @click="onClickMarker(device)"
-          ></l-marker>
+          >
+          </l-marker>
         </l-map>
       </v-col>
     </v-row>
@@ -94,7 +103,7 @@ export default {
       this.loadingDevices = false;
     },
     onClickMarker(device) {
-      console.log(device);
+      this.selectedDevice = device;
     }
   }
 };
