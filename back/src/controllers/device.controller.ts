@@ -101,8 +101,26 @@ export class DeviceController {
   async findFeltTemperatureById(
     @param.path.string('id') id: string,
     @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
-  ): Promise<Device> {
-    return this.findFeltTemperatureById(id, filter);
+  ): Promise<object> {
+
+    let result = await this.deviceRepository.findById(id).then(
+      device => {
+        let lastMesure : any; 
+        if (device && device.measurements && device.measurements.length){
+          lastMesure = device.measurements[0];
+          console.log("mesure", lastMesure);
+          if (lastMesure.temperature && lastMesure.temperature != 0 && lastMesure.wind  ){
+            return lastMesure.wind / lastMesure.temperature;
+          }
+          else if (lastMesure.temperature && lastMesure.temperature == 0 && lastMesure.wind){
+            return lastMesure.wind / 1;
+          }
+        }
+      }
+    )
+    return {
+      felt : result
+    };
   }
 
   @get('/devices/{id}/average', {
