@@ -34,7 +34,7 @@ export class DeviceController {
     return this.deviceRepository.count(where);
   }
 
-  @get('/devices', {
+  @get('/api/devices', {
     responses: {
       '200': {
         description: 'Array of Device model instances',
