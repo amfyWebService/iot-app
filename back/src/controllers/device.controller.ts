@@ -14,6 +14,7 @@ import {
 } from '@loopback/rest';
 import { Device, DeviceMeasurement } from '../models';
 import { DeviceRepository } from '../repositories';
+import Feels from "feels";
 
 @api({basePath: '/api', paths: {}})
 export class DeviceController {
@@ -103,19 +104,29 @@ export class DeviceController {
   async findFeltTemperatureById(
     @param.path.string('id') id: string  
     ): Promise<object> {
-    const result = await this.deviceRepository.findById(id).then(
-      device => {
-        if (device.measurements.length){
-          const lastMesure : DeviceMeasurement = device.measurements[0];
-          console.log("mesure", lastMesure);
-          if (lastMesure.temperature && lastMesure.wind){
-            return lastMesure.temperature != 0 ? lastMesure.wind / lastMesure.temperature : lastMesure.wind / 1  ;
-          }
+    const device = await this.deviceRepository.findById(id);
+    let felt: number|null = null;
+
+    if(device.measurements.length){
+      const lastMeasurement = device.measurements[0];
+
+      const feels = new Feels({
+        temp: lastMeasurement.temperature,
+        humidity: lastMeasurement.humidity,
+        speed: lastMeasurement.wind,
+        units: {
+          temp: 'c',
+          speed: 'kph'
         }
-      }
-    )
+      });
+
+      console.log(device.getId(), lastMeasurement, feels);
+
+      felt = feels.like();
+    }
+    
     return {
-      felt : result
+      felt : felt
     };
   }
 
