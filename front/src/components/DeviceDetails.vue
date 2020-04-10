@@ -13,6 +13,10 @@
         <p>temperature : {{lastMeasurement.temperature}}°C</p>
         <p>humidité : {{lastMeasurement.humidity}}%</p>
         <p>vent : {{lastMeasurement.wind}}km/h</p>
+        <v-alert v-if="isStrongBreeze()" type="info">Vent un peu fort</v-alert>
+        <v-alert v-else-if="isStrongGale()" type="warning">Fort coup de vent</v-alert>
+        <v-alert v-else-if="isStorm()" type="error">Tempête</v-alert>
+        <v-alert v-else type="info">Le vent est normal</v-alert>
       </template>
       <p v-else>Aucune mesure</p>
     </v-card-text>
@@ -27,20 +31,22 @@ export default {
       required: true
     }
   },
-  data(){
+  data() {
     return {
       lastMeasurement: undefined,
-    }
+      isStrongBreeze: () => this.lastMeasurement.wind >= 39 && this.lastMeasurement.wind <= 74,
+      isStrongGale: () => this.lastMeasurement.wind >= 75 && this.lastMeasurement.wind <= 88,
+      isStorm: () => this.lastMeasurement.wind >= 89
+    };
   },
-  mounted(){
-    if(this.device.measurements.length)
+  mounted() {
+    if (this.device.measurements.length)
       this.lastMeasurement = this.device.measurements[0];
   },
   methods: {
-    async refreshDevice(){
-      const {data} = await this.$axios.get('/devices/' + this.device._id);
-      if(data.measurements.length)
-        this.lastMeasurement = data.measurements[0];
+    async refreshDevice() {
+      const { data } = await this.$axios.get("/devices/" + this.device._id);
+      if (data.measurements.length) this.lastMeasurement = data.measurements[0];
     }
   }
 };
