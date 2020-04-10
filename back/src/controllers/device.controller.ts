@@ -10,10 +10,12 @@ import {
   param,
   get,
   getModelSchemaRef,
+  api,
 } from '@loopback/rest';
 import { Device, DeviceMeasurement } from '../models';
 import { DeviceRepository } from '../repositories';
 
+@api({basePath: '/api', paths: {}})
 export class DeviceController {
   constructor(
     @repository(DeviceRepository)
@@ -34,7 +36,7 @@ export class DeviceController {
     return this.deviceRepository.count(where);
   }
 
-  @get('/api/devices', {
+  @get('/devices', {
     responses: {
       '200': {
         description: 'Array of Device model instances',
@@ -62,7 +64,7 @@ export class DeviceController {
     return this.deviceRepository.find(filter);
   }
 
-  @get('/api/devices/{id}', {
+  @get('/devices/{id}', {
     responses: {
       '200': {
         description: 'Device model instance',
