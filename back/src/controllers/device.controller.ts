@@ -11,7 +11,7 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
-import { Device } from '../models';
+import { Device, DeviceMeasurement } from '../models';
 import { DeviceRepository } from '../repositories';
 
 export class DeviceController {
@@ -99,21 +99,15 @@ export class DeviceController {
     },
   })
   async findFeltTemperatureById(
-    @param.path.string('id') id: string,
-    @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
-  ): Promise<object> {
-
-    let result = await this.deviceRepository.findById(id).then(
+    @param.path.string('id') id: string  
+    ): Promise<object> {
+    const result = await this.deviceRepository.findById(id).then(
       device => {
-        let lastMesure : any; 
-        if (device && device.measurements && device.measurements.length){
-          lastMesure = device.measurements[0];
+        if (device.measurements.length){
+          const lastMesure : DeviceMeasurement = device.measurements[0];
           console.log("mesure", lastMesure);
-          if (lastMesure.temperature && lastMesure.temperature != 0 && lastMesure.wind  ){
-            return lastMesure.wind / lastMesure.temperature;
-          }
-          else if (lastMesure.temperature && lastMesure.temperature == 0 && lastMesure.wind){
-            return lastMesure.wind / 1;
+          if (lastMesure.temperature && lastMesure.wind){
+            return lastMesure.temperature != 0 ? lastMesure.wind / lastMesure.temperature : lastMesure.wind / 1  ;
           }
         }
       }
@@ -133,7 +127,9 @@ export class DeviceController {
               type: 'object',
               title: 'feltTemperatureByDeviceId',
               properties: {
-                feltTemperature: { type: 'number' },
+                temperature: { type: 'number' },
+                wind : { type: 'number' },
+                humidity : { type: 'number' }
               }
             }
           },
@@ -147,17 +143,23 @@ export class DeviceController {
   ):
     Promise<object> {
     
-    let results = await this.deviceRepository.findById(id).then(
+    let averages = await this.deviceRepository.findById(id).then(
       result => {
-        let temperatures: number[] = []
+        let temperatures: number[] = [];
+        let winds: number[] = [];
+        let humidities: number[] = [];
         if(result && result.measurements && result.measurements.length){
           temperatures = result.measurements.filter(x => x.temperature!==null && x.temperature!==undefined).map(x =>x.temperature || 0)
+          humidities = result.measurements.filter(x => x.humidity !==null && x.humidity!==undefined).map(x =>x.humidity || 0)
+          winds = result.measurements.filter(x => x.wind!==null && x.wind!==undefined).map(x =>x.wind || 0)
         }
-        return temperatures;
+        return {temperatures, humidities, winds};
       }
     )
     return {
-      feltTemperature : results.length  ?  results.reduce((a,b) => a + b, 0) / results.length : 0
+      temperature : averages.temperatures.length  ?  averages.temperatures.reduce((a,b) => a + b, 0) / averages.temperatures.length : null,
+      wind : averages.winds.length  ?  averages.winds.reduce((a,b) => a + b, 0) / averages.winds.length : null,
+      humidity : averages.humidities.length  ?  averages.humidities.reduce((a,b) => a + b, 0) / averages.humidities.length : null,
     };
   }
 }
