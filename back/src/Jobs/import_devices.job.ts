@@ -4,21 +4,19 @@ import util from 'util';
 
 
 export class ImportDevicesJob {
-  private readonly timeLoop: number;
+  private readonly timeLoop: number = 1 * 5 * 1000;
 
   constructor(
     private deviceService: DeviceService
-  ) {
-    this.timeLoop = 10 * 1000;
-  }
+  ) {}
 
   async start() {
     setInterval(() => this.eachMinute(), this.timeLoop);
   }
 
   private async eachMinute() {
-    console.log('Start Jobs');
-    this.deviceService.sayHello();
-    console.log('End Jobs');
+    console.log('Start ImportDevicesJob');
+    await this.deviceService.importDevices();
+    console.log('End ImportDevicesJob');
   }
 }

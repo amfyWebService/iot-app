@@ -12,24 +12,14 @@ export class DeviceService {
     @inject('services.IotApiService') private iotApiService: IotApiService
   ) {}
 
-  public start(){
-    this.task = setInterval(() => this.importDevices(), 1 * 60 * 1000);
-    this.importDevices();
-  }
-
-  sayHello(){
-    console.log("Hello");
-  }
-  public stop(){
-    clearInterval(this.task);
-  }
-
-  private async importDevices() {
+  public async importDevices() {
     const [temp, wind, humidity] = await Promise.all([
       this.iotApiService.getTemperature(),
       this.iotApiService.getWind(),
       this.iotApiService.getHumidity(),
     ]);
+
+    const promises: Promise<void>[] = [];
 
     for (const tempItem of temp) {
       const apiDevice = new IotApiDevice(tempItem);
@@ -48,8 +38,10 @@ export class DeviceService {
       }
       // end humidity
 
-      this.apiDeviceToMongoDevice(apiDevice);
+      promises.push(this.apiDeviceToMongoDevice(apiDevice));
     }
+
+    await Promise.all(promises);
   }
 
   private async apiDeviceToMongoDevice(apiDevice: IotApiDevice){
