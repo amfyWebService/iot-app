@@ -115,9 +115,7 @@ export class DeviceController {
               type: 'object',
               title: 'feltTemperatureByDeviceId',
               properties: {
-                temperature: { type: 'number' },
-                wind: { type: 'number' },
-                humidity: { type: 'number' }
+                feltTemperature: { type: 'number' },
               }
             }
           },
@@ -129,7 +127,7 @@ export class DeviceController {
     @param.path.string('id') id: string,
     @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
   ):
-    Promise<number> {
+    Promise<object> {
     
     let results = await this.deviceRepository.findById(id).then(
       result => {
@@ -140,6 +138,8 @@ export class DeviceController {
         return temperatures;
       }
     )
-    return results.reduce((a, b) => a + b, 0) / results.length
+    return {
+      feltTemperature : results.length  ?  results.reduce((a,b) => a + b, 0) / results.length : 0
+    };
   }
 }
