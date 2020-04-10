@@ -35,9 +35,9 @@ export class Device extends Entity {
 
   constructor(data?: Partial<Device>) {
     super(data);
-    // if(!this.measurements){
-    //   this.measurements = [];
-    // }
+    if(!this.measurements){
+      this.measurements = [];
+    }
   }
 }
 

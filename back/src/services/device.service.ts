@@ -6,35 +6,43 @@ import { DeviceRepository } from '../repositories';
 
 @bind({ scope: BindingScope.SINGLETON })
 export class DeviceService {
+  private task: NodeJS.Timeout;
+
   constructor(
     @repository(DeviceRepository) private deviceRepository: DeviceRepository,
     @inject('services.IotApiService') private iotApiService: IotApiService
-  ) {
-    console.log("coucocoucou")
-    this.hydrateDevices();
+  ) {}
+
+  public start(){
+    this.task = setInterval(() => this.importDevices(), 1 * 60 * 1000);
+    this.importDevices();
   }
 
-  async hydrateDevices() {
+  public stop(){
+    clearInterval(this.task);
+  }
+
+  private async importDevices() {
     const [temp, wind, humidity] = await Promise.all([
       this.iotApiService.getTemperature(),
       this.iotApiService.getWind(),
       this.iotApiService.getHumidity(),
     ]);
 
-    for (let tempItem of temp) {
-      let apiDevice = new IotApiDevice(tempItem);
-
+    for (const tempItem of temp) {
+      const apiDevice = new IotApiDevice(tempItem);
       // wind
-      let indexWind = wind.findIndex(value => value.id === apiDevice.getId());
+      const indexWind = wind.findIndex(value => value.id === apiDevice.getId());
+      
       if (indexWind >= 0) {
-        apiDevice.wind = wind[indexWind].wind;
+        apiDevice.wind = new IotApiDevice(wind[indexWind]).wind;
       }
       // end wind
 
       // humidity
-      let indexHumidity = humidity.findIndex(value => value.id === apiDevice.getId());
+      const indexHumidity = humidity.findIndex(value => value.id === apiDevice.getId());
       if (indexHumidity >= 0) {
-        apiDevice.humidity = wind[indexHumidity].humidity;
+        apiDevice.humidity = new IotApiDevice(humidity[indexHumidity]).humidity;
       }
       // end humidity
 
@@ -42,10 +50,11 @@ export class DeviceService {
     }
   }
 
-  async apiDeviceToMongoDevice(apiDevice: IotApiDevice){
+  private async apiDeviceToMongoDevice(apiDevice: IotApiDevice){
     let mongoDevice: Device | null;
     try {
       mongoDevice = await this.deviceRepository.findOne({ where: { name: apiDevice.id } });
+      console.log("[DeviceService]: handle device ", apiDevice.getId(), mongoDevice?.getId());
 
       if (!mongoDevice) {
         mongoDevice = new Device({
@@ -70,7 +79,10 @@ export class DeviceService {
         mongoDevice.measurements.splice(20, 1);
       }
 
-      this.deviceRepository.save(mongoDevice);
+      if(mongoDevice._id)
+        this.deviceRepository.update(mongoDevice);
+      else
+        this.deviceRepository.save(mongoDevice);
     } catch (e) {
       console.error("[DeviceService]: ", e);
     }

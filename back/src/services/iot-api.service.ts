@@ -1,7 +1,7 @@
 import {getService} from '@loopback/service-proxy';
 import {inject, Provider} from '@loopback/core';
 import {IotApiDataSource} from '../datasources';
-import { IotApiDevice } from '@/models';
+import { IotApiDevice } from '../models';
 
 export interface IotApiService {
   // this is where you define the Node.js methods that will be
