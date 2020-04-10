@@ -2,7 +2,7 @@ import {inject} from '@loopback/context';
 import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
 import { MongoDataSource } from '../datasources';
 import { service } from '@loopback/core';
-import { IotApiService } from '@/services';
+import { IotApiService } from '../services';
 import { IotApiDevice } from '../models';
 
 /**
