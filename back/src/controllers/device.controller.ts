@@ -11,20 +11,20 @@ import {
   get,
   getModelSchemaRef,
 } from '@loopback/rest';
-import {Device} from '../models';
-import {DeviceRepository} from '../repositories';
+import { Device } from '../models';
+import { DeviceRepository } from '../repositories';
 
 export class DeviceController {
   constructor(
     @repository(DeviceRepository)
-    public deviceRepository : DeviceRepository,
-  ) {}
+    public deviceRepository: DeviceRepository,
+  ) { }
 
   @get('/devices/count', {
     responses: {
       '200': {
         description: 'Device model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -42,7 +42,7 @@ export class DeviceController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(Device, {includeRelations: true}),
+              items: getModelSchemaRef(Device, { includeRelations: true }),
             },
           },
         },
@@ -53,10 +53,10 @@ export class DeviceController {
     // @param.filter(Device) filter?: Filter<Device>,
     @param.query.string("name") name?: string
   ): Promise<Device[]> {
-    const filter = {where: {}};
+    const filter = { where: {} };
 
-    if(name){
-      filter.where = {name: name};
+    if (name) {
+      filter.where = { name: name };
     }
 
     return this.deviceRepository.find(filter);
@@ -68,7 +68,7 @@ export class DeviceController {
         description: 'Device model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(Device, {includeRelations: true}),
+            schema: getModelSchemaRef(Device, { includeRelations: true }),
           },
         },
       },
@@ -90,7 +90,7 @@ export class DeviceController {
               type: 'object',
               title: 'feltTemperatureByDeviceId',
               properties: {
-                felt : {type: 'number'}
+                felt: { type: 'number' }
               }
             }
           },
@@ -100,7 +100,7 @@ export class DeviceController {
   })
   async findFeltTemperatureById(
     @param.path.string('id') id: string,
-    @param.filter(Device, {exclude: 'where'}) filter?: FilterExcludingWhere<Device>
+    @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
   ): Promise<Device> {
     return this.findFeltTemperatureById(id, filter);
   }
@@ -115,9 +115,9 @@ export class DeviceController {
               type: 'object',
               title: 'feltTemperatureByDeviceId',
               properties: {
-                temperature : {type: 'number'},
-                wind : {type : 'number'},
-                humidity : {type : 'number'}
+                temperature: { type: 'number' },
+                wind: { type: 'number' },
+                humidity: { type: 'number' }
               }
             }
           },
@@ -127,8 +127,19 @@ export class DeviceController {
   })
   async findTemperatureAverageById(
     @param.path.string('id') id: string,
-    @param.filter(Device, {exclude: 'where'}) filter?: FilterExcludingWhere<Device>
-  ): Promise<Device> {
-    return this.findTemperatureAverageById(id, filter);
+    @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
+  ):
+    Promise<number> {
+    
+    let results = await this.deviceRepository.findById(id).then(
+      result => {
+        let temperatures: number[] = []
+        if(result && result.measurements && result.measurements.length){
+          temperatures = result.measurements.filter(x => x.temperature!==null && x.temperature!==undefined).map(x =>x.temperature || 0)
+        }
+        return temperatures;
+      }
+    )
+    return results.reduce((a, b) => a + b, 0) / results.length
   }
 }

@@ -1,4 +1,3 @@
-import { inject, service } from '@loopback/core';
 import { DeviceService } from '../services';
 import util from 'util';
 
