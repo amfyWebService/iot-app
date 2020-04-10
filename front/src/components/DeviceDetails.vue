@@ -39,8 +39,8 @@ export default {
   methods: {
     async refreshDevice(){
       const {data} = await this.$axios.get('/devices/' + this.device._id);
-      if(data.measurement.length)
-        this.lastMeasurement = data.measurement[0];
+      if(data.measurements.length)
+        this.lastMeasurement = data.measurements[0];
     }
   }
 };
