@@ -43,6 +43,7 @@
             :lat-lng="device.latLng"
             @click="onClickMarker(device)"
           >
+            <l-tooltip>{{device.name}}</l-tooltip>
           </l-marker>
         </l-map>
       </v-col>
@@ -50,7 +51,7 @@
   </v-container>
 </template>
 <script>
-import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LTooltip } from "vue2-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
@@ -66,7 +67,7 @@ Icon.Default.mergeOptions({
 
 export default {
   name: "Map",
-  components: { LMap, LTileLayer, LMarker, DeviceList, DeviceDetails },
+  components: { LMap, LTileLayer, LMarker, DeviceList, DeviceDetails, LTooltip },
   data() {
     return {
       zoom: 13,
@@ -104,6 +105,13 @@ export default {
     },
     onClickMarker(device) {
       this.selectedDevice = device;
+    }
+  },
+  watch: {
+    selectedDevice(device){
+      if(device){
+        this.center = device.latLng;
+      }
     }
   }
 };

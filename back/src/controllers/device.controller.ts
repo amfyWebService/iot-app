@@ -62,7 +62,7 @@ export class DeviceController {
     return this.deviceRepository.find(filter);
   }
 
-  @get('/devices/{id}', {
+  @get('/api/devices/{id}', {
     responses: {
       '200': {
         description: 'Device model instance',
