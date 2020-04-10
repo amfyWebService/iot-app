@@ -14,10 +14,7 @@
         <p>ressenti: {{temperatureFelt}}°C</p>
         <p>humidité : {{lastMeasurement.humidity}}%</p>
         <p>vent : {{lastMeasurement.wind}}km/h</p>
-        <v-alert v-if="isStrongBreeze()" type="info">Vent un peu fort</v-alert>
-        <v-alert v-else-if="isStrongGale()" type="warning">Fort coup de vent</v-alert>
-        <v-alert v-else-if="isStorm()" type="error">Tempête</v-alert>
-        <v-alert v-else type="info">Le vent est normal</v-alert>
+        <v-alert v-if="windForce" :type="windForce.type">{{windForce.text}}</v-alert>
       </template>
       <p v-else>Aucune mesure</p>
     </v-card-text>
@@ -36,9 +33,12 @@ export default {
     return {
       lastMeasurement: undefined,
       temperatureFelt: undefined,
-      isStrongBreeze: () => this.lastMeasurement.wind >= 39 && this.lastMeasurement.wind <= 74,
-      isStrongGale: () => this.lastMeasurement.wind >= 75 && this.lastMeasurement.wind <= 88,
-      isStorm: () => this.lastMeasurement.wind >= 89
+      windForceMap: [
+        {minSpeed: 0, text: "Le vent est normal", type: "info"},
+        {minSpeed: 39, text: "Vent un peu fort", type: "info"},
+        {minSpeed: 75, text: "Fort coup de vent", type: "warning"},
+        {minSpeed: 89, text: "Tempête", type: "error"},
+      ],
     };
   },
   mounted() {
@@ -53,6 +53,19 @@ export default {
     async getFeltTemperature() {
       const { data } = await this.$axios.get(`/devices/${this.device._id}/felt-temperature`);
       data.felt ? this.temperatureFelt = Math.round(10*data.felt)/10 : this.temperatureFelt = 0;
+    }
+  },
+  computed: {
+    windForce(){
+      let windForce;
+      for(let item of this.windForceMap){
+        if(this.lastMeasurement.wind > item.minSpeed){
+          windForce = item;
+        } else {
+          break;
+        }
+      }
+      return windForce;
     }
   }
 };
