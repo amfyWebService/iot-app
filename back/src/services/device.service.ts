@@ -4,7 +4,6 @@ import { repository } from '@loopback/repository';
 import { IotApiDevice, Device } from '../models';
 import { DeviceRepository } from '../repositories';
 
-@bind({ scope: BindingScope.SINGLETON })
 export class DeviceService {
   private task: NodeJS.Timeout;
 
@@ -18,6 +17,9 @@ export class DeviceService {
     this.importDevices();
   }
 
+  sayHello(){
+    console.log("Hello");
+  }
   public stop(){
     clearInterval(this.task);
   }
