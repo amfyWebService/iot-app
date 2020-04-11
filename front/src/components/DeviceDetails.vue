@@ -14,6 +14,7 @@
         <p>ressenti: {{temperatureFelt}}°C</p>
         <p>humidité : {{lastMeasurement.humidity}}%</p>
         <p>vent : {{lastMeasurement.wind}}km/h</p>
+        <p>moyennes : {{average.temperature}}°C, {{average.wind}}km/h, {{average.humidity}}%</p>
         <v-alert v-if="windForce" :type="windForce.type">{{windForce.text}}</v-alert>
       </template>
       <p v-else>Aucune mesure</p>
@@ -34,9 +35,12 @@ export default {
       deviceData: undefined,
       lastMeasurement: undefined,
       temperatureFelt: undefined,
+      average: undefined,
       windForceMap: [
         { minSpeed: 0, text: "Le vent est normal", type: "info" },
         { minSpeed: 39, text: "Vent un peu fort", type: "info" },
+        { minSpeed: 50, text: "Grand frais", type: "info" },
+        { minSpeed: 62, text: "Coup de vent", type: "warning" },
         { minSpeed: 75, text: "Fort coup de vent", type: "warning" },
         { minSpeed: 89, text: "Tempête", type: "error" }
       ]
@@ -54,6 +58,10 @@ export default {
       data.felt
         ? (this.temperatureFelt = Math.round(10 * data.felt) / 10)
         : (this.temperatureFelt = 0);
+    },
+    async getAverage() {
+      const { data } = await this.$axios.get(`/devices/${this.deviceData._id}/average`);
+      this.average = data;
     }
   },
   watch: {
@@ -64,6 +72,7 @@ export default {
       }
     },
     deviceData(device){
+      this.getAverage();
       this.getFeltTemperature();
       if (device.measurements.length)
         this.lastMeasurement = device.measurements[0];
