@@ -1,8 +1,5 @@
 import {inject} from '@loopback/context';
 import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
-import { MongoDataSource } from '../datasources';
-import { IotApiService, DeviceService } from '../services';
-import { service } from '@loopback/core';
 
 /**
  * OpenAPI response for ping()
@@ -40,10 +37,6 @@ const PING_RESPONSE: ResponseObject = {
  */
 export class PingController {
   constructor(@inject(RestBindings.Http.REQUEST) private req: Request, 
-  @inject("datasources.mongo") private mongoDs: MongoDataSource,
-  //@service(IotApiService) private iotApiService:IotApiService  
-  @inject("services.IotApiService") private iotApiService:IotApiService,
-  @service(DeviceService) private deviceService: DeviceService,
   ) {}
 
   // Map to `GET /ping`
@@ -55,12 +48,12 @@ export class PingController {
   async ping(): Promise<object> {
     let mongoIsUp: string = "no";
 
-    try{
-      await this.mongoDs.ping();
-      mongoIsUp = "yes";
-    } catch(e){
-      mongoIsUp = "error";
-    }
+    // try{
+    //   await this.mongoDs.ping();
+    //   mongoIsUp = "yes";
+    // } catch(e){
+    //   mongoIsUp = "error";
+    // }
     
     // Reply with a greeting, the current time, the url, and request headers
     return {

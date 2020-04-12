@@ -16,14 +16,14 @@ import { Device, DeviceMeasurement } from '../models';
 import { DeviceRepository } from '../repositories';
 import Feels from "feels";
 
-@api({basePath: '/api', paths: {}})
+@api({basePath: '/api/devices', paths: {}})
 export class DeviceController {
   constructor(
     @repository(DeviceRepository)
     public deviceRepository: DeviceRepository,
   ) { }
 
-  @get('/devices/count', {
+  @get('/count', {
     responses: {
       '200': {
         description: 'Device model count',
@@ -37,7 +37,7 @@ export class DeviceController {
     return this.deviceRepository.count(where);
   }
 
-  @get('/devices', {
+  @get('/', {
     responses: {
       '200': {
         description: 'Array of Device model instances',
@@ -65,7 +65,7 @@ export class DeviceController {
     return this.deviceRepository.find(filter);
   }
 
-  @get('/devices/{id}', {
+  @get('/{id}', {
     responses: {
       '200': {
         description: 'Device model instance',
@@ -83,7 +83,7 @@ export class DeviceController {
     return this.deviceRepository.findById(id);
   }
 
-  @get('/devices/{id}/felt-temperature', {
+  @get('/{id}/felt-temperature', {
     responses: {
       '200': {
         description: 'Device model instance',
@@ -130,7 +130,7 @@ export class DeviceController {
     };
   }
 
-  @get('/devices/{id}/average', {
+  @get('/{id}/average', {
     responses: {
       '200': {
         description: 'Device model instance',

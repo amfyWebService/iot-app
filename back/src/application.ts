@@ -9,6 +9,7 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import fs from "fs";
 
 export class BackApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -21,6 +22,18 @@ export class BackApplication extends BootMixin(
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
+
+    /*
+     * Get the list of every files and dir on public dir
+     * And redirect every route to the front "index.html" 
+     * except routes starting with /api or files and dir name of public directory
+     */
+    const publicFilesAndDir = fs.readdirSync(path.join(__dirname, '../public'));
+    const regexFront = new RegExp(`^\/(?!api|${publicFilesAndDir.join('|')}).*`);
+    // @ts-ignore
+    this.mountExpressRouter(regexFront, function(req, res, next){
+      res.sendfile(path.join(__dirname, '../public/index.html'));
+    });
 
     // Customize @loopback/rest-explorer configuration here
     this.configure(RestExplorerBindings.COMPONENT).to({
