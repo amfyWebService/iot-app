@@ -1,7 +1,7 @@
 <template>
   <v-container fluid style="height: 100%" class="pa-0">
     <v-row style="height: 100%" no-gutters>
-      <v-col cols="3">
+      <v-col cols="4">
         <v-card style="height: 100%">
           <v-card-text>
             <v-text-field
