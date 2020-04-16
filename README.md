@@ -35,6 +35,7 @@ Both server and client side run in docker containers
 * Get wind force based on [Beaufort scale](https://fr.wikipedia.org/wiki/Échelle_de_Beaufort)
 * Get average of temperature, humidity and wind
 * Display all devices on a map
+* Calculate felt temperature
 
 ## API documentation
 
