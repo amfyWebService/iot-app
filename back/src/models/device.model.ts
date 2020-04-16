@@ -17,6 +17,7 @@ export class Device extends Entity {
 
   @property({
     type: 'string',
+    required: true,
   })
   longitude?: string;
 
