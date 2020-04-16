@@ -5,6 +5,7 @@
         <v-card style="height: 100%">
           <v-card-text>
             <v-text-field
+              v-show="!selectedDevice"
               @change="searchDevice()"
               label="Rechercher un appareil"
               v-model="search"
