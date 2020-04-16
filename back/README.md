@@ -1,3 +1,27 @@
-# back
+# Server Side
 
-[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+## requirements
+
+At least you need :
+
+* node 10
+
+* mongoDB server
+
+### Project setup
+
+```bash
+$ npm install
+```
+
+### Compiles and hot-reloads for development
+
+```bash
+$ npm run start:watch
+```
+
+### Compiles and minifies for production
+
+```bash
+$ npm run build
+```
