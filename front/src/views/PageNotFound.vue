@@ -1,6 +1,6 @@
 <template>
-<v-container style="height: 100%">
-    <v-row style="height: 100%" class="justify-center">
+<v-container style="height: 100%" class="d-flex">
+    <v-row class="align-self-center">
         <v-col cols="12" class="text-center">
             <h1 class="display-4">404 - tu t'es perdu gros ?</h1>
         </v-col>
