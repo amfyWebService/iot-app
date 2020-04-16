@@ -28,8 +28,9 @@ export class BackApplication extends BootMixin(
      * And redirect every route to the front "index.html" 
      * except routes starting with /api or files and dir name of public directory
      */
-    const publicFilesAndDir = fs.readdirSync(path.join(__dirname, '../public'));
-    const regexFront = new RegExp(`^\/(?!api|${publicFilesAndDir.join('|')}).*`);
+    const whiteList = fs.readdirSync(path.join(__dirname, '../public'));
+    whiteList.push(...["api", "explorer", "openapi.json"]);
+    const regexFront = new RegExp(`^\/(?!${whiteList.join('|')}).*`);
     // @ts-ignore
     this.mountExpressRouter(regexFront, function(req, res, next){
       res.sendfile(path.join(__dirname, '../public/index.html'));

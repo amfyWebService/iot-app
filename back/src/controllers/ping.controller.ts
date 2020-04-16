@@ -1,5 +1,6 @@
 import {inject} from '@loopback/context';
 import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
+import { MongoDataSource } from '../datasources';
 
 /**
  * OpenAPI response for ping()
@@ -36,11 +37,13 @@ const PING_RESPONSE: ResponseObject = {
  * A simple controller to bounce back http requests
  */
 export class PingController {
-  constructor(@inject(RestBindings.Http.REQUEST) private req: Request, 
+  constructor(
+    @inject(RestBindings.Http.REQUEST) private req: Request,
+    @inject("datasources.mongo") private mongoDs: MongoDataSource
   ) {}
 
   // Map to `GET /ping`
-  @get('/ping', {
+  @get('/api/ping', {
     responses: {
       '200': PING_RESPONSE,
     },
@@ -48,12 +51,12 @@ export class PingController {
   async ping(): Promise<object> {
     let mongoIsUp: string = "no";
 
-    // try{
-    //   await this.mongoDs.ping();
-    //   mongoIsUp = "yes";
-    // } catch(e){
-    //   mongoIsUp = "error";
-    // }
+    try{
+      await this.mongoDs.ping();
+      mongoIsUp = "yes";
+    } catch(e){
+      mongoIsUp = "error";
+    }
     
     // Reply with a greeting, the current time, the url, and request headers
     return {
