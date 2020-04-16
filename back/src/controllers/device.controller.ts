@@ -152,7 +152,6 @@ export class DeviceController {
   })
   async findTemperatureAverageById(
     @param.path.string('id') id: string,
-    @param.filter(Device, { exclude: 'where' }) filter?: FilterExcludingWhere<Device>
   ):
     Promise<object> {
     
