@@ -41,8 +41,8 @@ Both server and client side run in docker containers
 
 Api documentation provided by [Openapi](https://www.openapis.org)
 
-`http://localhost/explorer/#/`
-`http://localhost/openapi.json`
+* our apis are accessible [here](http://ec2-15-188-53-1.eu-west-3.compute.amazonaws.com/explorer)
+* for raw json it's [here](http://ec2-15-188-53-1.eu-west-3.compute.amazonaws.com/openapi.json)
 
 ## CI/CD
 
