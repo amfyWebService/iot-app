@@ -5,6 +5,7 @@
         <v-card style="height: 100%">
           <v-card-text>
             <v-text-field
+              @change="searchDevice()"
               label="Rechercher un appareil"
               v-model="search"
               hide-details
@@ -26,7 +27,7 @@
                 <device-list
                   v-show="!selectedDevice"
                   key="list"
-                  :devices="devices"
+                  :devices="filteredDevices"
                   @click:device="selectedDevice=$event"
                 ></device-list>
               </v-card-text>
@@ -38,7 +39,7 @@
         <l-map style="height: 100%" :zoom="zoom" :center="center" :bounds="bounds">
           <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
           <l-marker
-            v-for="device in devices"
+            v-for="device in filteredDevices"
             :key="device.id"
             :lat-lng="device.latLng"
             @click="onClickMarker(device)"
@@ -84,7 +85,8 @@ export default {
       loadingDevices: false,
       search: "",
       bounds: undefined,
-      selectedDevice: undefined
+      selectedDevice: undefined,
+      filteredDevices: []
     };
   },
   mounted() {
@@ -99,19 +101,27 @@ export default {
       }
       this.devices = data;
 
-      this.bounds = L.latLngBounds(this.devices.map(value => value.latLng));
-
       this.loadingDevices = false;
+
+      this.filteredDevices = data;
+
     },
     onClickMarker(device) {
       this.selectedDevice = device;
-    }
+    },
+    async searchDevice(){
+      this.filteredDevices  = this.devices.filter(o => o.name.includes(this.search))
+      
+    },
   },
   watch: {
     selectedDevice(device){
       if(device){
         this.center = device.latLng;
       }
+    },
+    filteredDevices(){
+      this.bounds = L.latLngBounds(this.filteredDevices.map(value => value.latLng));
     }
   }
 };
