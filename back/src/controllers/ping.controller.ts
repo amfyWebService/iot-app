@@ -1,8 +1,6 @@
 import {inject} from '@loopback/context';
 import {get, Request, ResponseObject, RestBindings} from '@loopback/rest';
 import { MongoDataSource } from '../datasources';
-import { IotApiService, DeviceService } from '../services';
-import { service } from '@loopback/core';
 
 /**
  * OpenAPI response for ping()
@@ -39,15 +37,13 @@ const PING_RESPONSE: ResponseObject = {
  * A simple controller to bounce back http requests
  */
 export class PingController {
-  constructor(@inject(RestBindings.Http.REQUEST) private req: Request, 
-  @inject("datasources.mongo") private mongoDs: MongoDataSource,
-  //@service(IotApiService) private iotApiService:IotApiService  
-  @inject("services.IotApiService") private iotApiService:IotApiService,
-  @service(DeviceService) private deviceService: DeviceService,
+  constructor(
+    @inject(RestBindings.Http.REQUEST) private req: Request,
+    @inject("datasources.mongo") private mongoDs: MongoDataSource
   ) {}
 
   // Map to `GET /ping`
-  @get('/ping', {
+  @get('/api/ping', {
     responses: {
       '200': PING_RESPONSE,
     },
