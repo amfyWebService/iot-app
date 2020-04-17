@@ -204,7 +204,7 @@ export default {
           color: "grey darken-2"
         }
       ],
-      TemperatureMap: [
+      temperatureMap: [
         {
           text: "Température supérieure à la moyenne",
           icon: "mdi-arrow-top-right",
@@ -291,10 +291,10 @@ export default {
     },
     temperature() {
       if (this.lastMeasurement?.temperature > this.average.temperature) {
-        return this.TemperatureMap[0];
+        return this.temperatureMap[0];
       }
       if (this.lastMeasurement?.temperature < this.average.temperature) {
-        return this.TemperatureMap[1];
+        return this.temperatureMap[1];
       }
       return this.temperatureMap[2];
     }
